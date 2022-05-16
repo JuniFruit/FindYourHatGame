@@ -213,7 +213,7 @@ class Field {
         if(generated[rndLine][rndPlace] !== pathCharacter) {
             generated[rndLine].splice(rndPlace, 1, hat)
         } else {
-            generated[randomNum(0, height)].splice(randomNum(0, width), 1, hat)
+            generated[randomNum(0, this.height)].splice(randomNum(0, this.width), 1, hat)
         }
         ;
         this.field = generated;
@@ -235,4 +235,37 @@ class Field {
 
 const game = new Field();
 
-game.gameInit();
+game.width = 20;
+game.height = 20;
+const arrHoles = game.forGenerator(0.4);
+
+game.arrWithHoles = arrHoles;
+
+const field = game.generateField();
+game.print();
+
+const fs = require('fs');
+const path = require('path');
+
+fs.readFile(path.join(__dirname, 'starting', 'data.txt', 'utf8'), (err, data) => {
+    if (err) {
+        throw err
+    }
+    console.log(data);
+})
+
+fs.appendFile(path.join(__dirname, 'starting', 'data.txt'), field, (err) => {
+    if (err) {
+        throw err
+    }
+    
+})
+
+
+
+
+
+process.on('Uncaught error', (err) => {
+    console.log(`There is an error: ${err}`);
+    process.exit(1);
+})
