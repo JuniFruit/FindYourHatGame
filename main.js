@@ -30,8 +30,6 @@ class Field {
         this.field = [];
         this.isOver = false;
         this.arrWithHoles;
-        
-       
     }
 
 // Asks field size of the game
@@ -248,19 +246,62 @@ game.arrWithHoles = arrHoles;
 
 const fs = require('fs');
 const path = require('path');
-
-
-
- const data = fs.readFileSync('data.json');
- const savedField = JSON.parse(data);
-
-game.field = savedField;
-game.print();
-
-
-
+const data = fs.readFileSync('data.json');
+const savedField = JSON.parse(data);
 
 process.on('Uncaught error', (err) => {
     console.log(`There is an error: ${err}`);
     process.exit(1);
 })
+ 
+
+ let startVert = 7;
+ let startHor = 3;
+
+ let endVert = 5;
+ let endHor = 10;
+
+ let start;
+ let end;
+
+game.field = savedField;
+game.print();
+
+const openSet = [];
+const closedSet = [];
+
+function Spot() {
+    
+    this.f = 0;
+    this.g = 0;
+    this.h = 0;
+}
+
+
+const mazeSolver = () => {
+    for(let i=0; i<savedField.length; i++) {
+        for(let j=0; j<savedField[i].length; j++) {
+            savedField[i][j] = new Spot(); 
+        }
+    }
+    start = savedField[startVert][startHor];
+    end = savedField[endVert][endHor];
+
+    openSet.push(start);
+    if (openSet.length > 0) {
+        let winner = 0;
+
+        for(let i=0;i < openSet.length; i++) {
+            if (openSet[i].f < openSet[winner].f) {
+                winner = i;
+            }
+        }
+        if (openSet[winner] === end) {
+            console.log('Done')
+        }
+
+    } else {
+
+    }
+
+}
