@@ -1,0 +1,14 @@
+{
+  "name": "find-your-hat",
+  "version": "1.0.0",
+  "description": "A terminal maze-solving game.",
+  "main": "main.js",
+  "author": "Codecademy",
+  "license": "ISC",
+  "dependencies": {
+    "kit": "^0.1.2",
+    "prompt-sync": "^4.1.7",
+    "terminal": "^0.1.4",
+    "terminal-kit": "^2.4.0"
+  }
+}
