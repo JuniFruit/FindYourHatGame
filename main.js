@@ -241,26 +241,21 @@ const arrHoles = game.forGenerator(0.4);
 
 game.arrWithHoles = arrHoles;
 
-const field = game.generateField();
-game.print();
+
+
+
+
 
 const fs = require('fs');
 const path = require('path');
 
-fs.readFile(path.join(__dirname, 'starting', 'data.txt', 'utf8'), (err, data) => {
-    if (err) {
-        throw err
-    }
-    console.log(data);
-})
 
-fs.appendFile(path.join(__dirname, 'starting', 'data.txt'), field, (err) => {
-    if (err) {
-        throw err
-    }
-    
-})
 
+ const data = fs.readFileSync('data.json');
+ const savedField = JSON.parse(data);
+
+game.field = savedField;
+game.print();
 
 
 
