@@ -18,190 +18,210 @@ const randomNum = (min, max) => {
 
 
 
-// Getting size of a field from a user
-const askFieldSize = () => {
-    prompt('Hello! To move around give the direction with W,A,S,D and hit Enter')
-    let userSize = prompt('Enter field size: ');
-    while (!(userSize > 0)) {
-        userSize = prompt('Please enter a number: ');
-        Number(userSize)
-    }   
-    return [userSize]
-}
-
-// Inserting holes depending on difficulty using probabilities
-
-const askDifficulty = () => {
-    let answer = prompt('Choose the difficulty: Easy, Medium or Hard: ');
-    const regex = new RegExp('easy|medium|hard', 'm');
-    while (!regex.test(answer.toLowerCase())) {
-        answer = prompt('Please choose a difficulty. Type: Easy, Medium or Hard: ');
-        answer.toLowerCase();
-        
-    }
-        
-   
-    return answer
-    
-}
-
-const evaluateAnswer = (answer) => {
-    if (answer === 'easy') return 0.1;
-    if (answer === 'medium') return 0.3;
-    if (answer === 'hard') return 0.4;
-    else {
-        askDifficulty()
-    }
-}
-// Returning an array that will be used in generateField method
-
-const forGenerator = (probability) => {
-    const forGeneratorArr = [];
-    
-    for(let i=0; i<10; i++) {
-        forGeneratorArr.push(fieldCharacter);
-        
-    }
-    const numOfHolesInArr = forGeneratorArr.length * probability;
-    forGeneratorArr.fill(hole, 0, numOfHolesInArr);
-
-    return forGeneratorArr;
-}
-
-//Transforming moves to num values and saving it to the Intance we're now playing on
-
-const moveAround = (move, obj) => {
-    let vertical = obj.posVert;
-    let horizontal = obj.posHor;
-    if(move === 's') vertical++;
-    if(move === 'w') vertical -= 1;
-    if(move === 'd') horizontal ++;
-    if(move === 'a') horizontal -= 1;
-    return [vertical, horizontal];
-}
-
-//Generating random game field with user size
-
-const gameField = (userInputs, arr) => {
-    const genField = Field.generateField(userInputs, userInputs, arr);
-    const field = new Field(genField[0]);
-    field.posVert = genField[1];
-    field.posHor = genField[2];
-    return field
-}
 
 
-//Checking every move for a finish condition, if nothing happens it saves current pos to the Instance(Field)
-const isFinished = (obj) => {
-    let field = obj.field;
-    let posVert = obj.posVert;
-    let posHor = obj.posHor;
-    if (posVert < 0 || posHor < 0) {
-        console.log('Oops, You fell out of the world!');
-        return
-    }
-        if (posVert > field.length - 1 || posHor > field[0].length - 1) {
-        console.log('Oops, You fell out of the world!');
-        return
-    }
-    if (field[posVert][posHor] === hole) {
-        console.log('You fell down in a hole');
-        return;
-    }
-    if (field[posVert][posHor] === hat) {
-        console.log('Congratulations! You\'ve found the hat');
-        return
-    }
-    
-    
-    return field[posVert][posHor] = pathCharacter;
-}
-
-// The main function to start the game 
-
-const gameProgress = (obj) => {
-    let input = prompt('Your move is :')
-    input.toLowerCase();
-    console.log(input)
-    obj.posVert = moveAround(input, obj)[0];
-    obj.posHor = moveAround(input, obj)[1];
-    
-       
-    if (typeof isFinished(obj) !== 'string') {
-        const answer = prompt('One more time? Type Yes or No: ');
-        gameRestart(answer);
-        obj.isOver = true;
-    } else {
-        obj.field[obj.posVert][obj.posHor] = isFinished(obj); 
-    }
-}
-
-
-// Looping the game until finish condition is achieved
-
-const gameLoop = (obj,diffArr ) => {
-    while (obj.isOver === false) {
-        obj.print();
-        gameProgress(obj, diffArr);
-        
-    }
-    
-}
-
-//Restarting the game with the same user inputs if user types 'yes'
-
-const gameRestart = (answer) => {
-    if (answer.toLowerCase() === 'yes') {
-        const restartedGame = gameField(userSize)
-        gameLoop(restartedGame);
-
-    } else {
-        console.log('See you next time!')
-        return
-    }
-
-}
-
-
-// Field class which stores position and prints the field. Also it randomly generates field with given inputs
 
 class Field {
-    constructor(field) {
+    constructor() {
         this.posVert = 0;
         this.posHor = 0;
-        this.field = field;
+        this.height = 0;
+        this.width = 0
+        this.field = [];
         this.isOver = false;
+        this.arrWithHoles;
+        
        
     }
 
-    static generateField(height, width) {
-        let generated = [];
+// Asks field size of the game
+
+    askFieldSize() {
+        prompt('Hello! To move around give the direction with W,A,S,D and hit Enter')
+        let userSize = prompt('Enter field size: ');
+        while (!(userSize > 0)) {
+            userSize = prompt('Please enter a number: ');
+            Number(userSize)
+        }   
+        this.height = Number(userSize);
+        this.width = Number(userSize);
+    }
+
+// Asks user difficulty
+
+    askDifficulty() {
+        let answer = prompt('Choose the difficulty: Easy, Medium or Hard: ');
+        const regex = new RegExp('easy|medium|hard', 'i');
+        while (!regex.test(answer)) {
+            answer = prompt('Please choose a difficulty. Type: Easy, Medium or Hard: ');
+            
+            
+        }
+            
+       
+        return answer
         
-        for(let i=0; i<height;i++) {
+    }
+    
+    evaluateAnswer(answer) {
+        if (answer.toLowerCase() === 'easy') return 0.1;
+        if (answer.toLowerCase() === 'medium') return 0.3;
+        if (answer.toLowerCase() === 'hard') return 0.4;
+        else {
+            askDifficulty()
+        }
+    }
+
+//Generates a 10 length array with holes based on chosen difficulty
+
+    forGenerator(probability) {
+        const forGeneratorArr = [];
+        
+        for(let i=0; i<10; i++) {
+            forGeneratorArr.push(fieldCharacter);
+            
+        }
+        const numOfHolesInArr = forGeneratorArr.length * probability;
+        forGeneratorArr.fill(hole, 0, numOfHolesInArr);
+    
+        return forGeneratorArr;
+    }
+// Loops the game until finish condition is achieved
+     gameLoop(){
+        while (this.isOver === false) {
+            styles.setStyles();
+            this.print();
+            this.gameProgress();
+            
+        }
+        
+    }
+// The main function to start the game 
+    gameInit() {
+        styles.setStyles()
+        this.askFieldSize();
+        const difficulty = this.askDifficulty();
+        const probability = this.evaluateAnswer(difficulty);
+        this.arrWithHoles = this.forGenerator(probability);
+        this.generateField();
+        this.gameLoop();
+        
+    }
+// Handles the progress of the game
+
+    gameProgress() {
+        this.moveAround();
+        
+        if (this.isFinished()) {
+            const answer = prompt('One more time? Type Yes or No: ');
+            this.gameRestart(answer);
+            this.isOver = true;
+        } else {
+            this.field[this.posVert][this.posHor] = pathCharacter; 
+        }
+    }
+
+// Handles the moving logic
+
+    moveAround() {
+        let move = prompt('Your move is: ').toLowerCase();
+        
+        switch (move) {
+            case 'w':
+                console.log('This goes up');
+                this.posVert -= 1;
+                console.log(this.posVert)
+                break;
+            case 's':
+                this.posVert += 1;
+                break;
+            case 'd':
+                this.posHor += 1;
+                 break;
+            case 'a':
+                this.posHor -= 1;
+                break;
+            default:
+                console.log('Enter W,A,S or D and hit Enter');
+                this.moveAround();
+                break;
+        }
+        
+    }
+
+// Checks whether the finish condition is achieved
+
+    isFinished() {
+        
+        if (this.posVert < 0 || this.posHor < 0) {
+            console.log('Oops, You fell out of the world!');
+            return true
+        }
+            if (this.posVert > this.field.length - 1 || this.posHor > this.field[0].length - 1) {
+            console.log('Oops, You fell out of the world!');
+            return true
+        }
+        if (this.field[this.posVert][this.posHor] === hole) {
+            console.log('You fell down in a hole');
+            return true;
+        }
+        if (this.field[this.posVert][this.posHor] === hat) {
+            console.log('Congratulations! You\'ve found the hat');
+            return true
+        }
+        
+        
+        
+    }
+//Restarts the game with the same user inputs if user types 'yes'
+
+    gameRestart (answer) {
+        if (answer.toLowerCase() === 'yes') {
+            this.generateField();
+            this.gameLoop();
+    
+        } else {
+            console.log('See you next time!')
+            return
+        }
+    
+    }
+
+
+
+
+// Generates a random field with given size and difficulty
+
+    generateField() {
+        let generated = [];
+        for(let i=0; i<this.height;i++) {
             let line = [];
-            for(let j=0;j<width;j++) {
-                let ind = randomNum(0, difficultyArr.length);
-                line.push(difficultyArr[ind]);
+            for(let j=0;j<this.width;j++) {
+                let ind = randomNum(0, 10);
+                line.push(this.arrWithHoles[ind]);
             };
             generated.push(line);
         }
         // Placing our character at random pos
-        let startVertPos = randomNum(0, height);
-        let startHorPos = randomNum(0, width)
+        let startVertPos = randomNum(0, this.height);
+        let startHorPos = randomNum(0, this.width)
         generated[startVertPos].splice(startHorPos, 1, pathCharacter);
         
         // Placing our har at a random pos
-        let rndLine = randomNum(0, height);
-        let rndPlace = randomNum(0, width);
+        let rndLine = randomNum(0, this.height);
+        let rndPlace = randomNum(0, this.width);
         if(generated[rndLine][rndPlace] !== pathCharacter) {
             generated[rndLine].splice(rndPlace, 1, hat)
         } else {
             generated[randomNum(0, height)].splice(randomNum(0, width), 1, hat)
         }
         ;
-        // Return field
-        return [generated, startVertPos, startHorPos];
+        this.field = generated;
+        this.posVert = startVertPos;
+        this.posHor = startHorPos;
+        
     }
+// Prints the field to the terminal 
 
     print() {
         this.field.forEach(line => {
@@ -212,11 +232,7 @@ class Field {
     }
 }
 
-styles.setStyles();
-const userSize = askFieldSize();
-const difficulty = askDifficulty();
-const probability = evaluateAnswer(difficulty);
-const difficultyArr = forGenerator(probability);
-const game = gameField(userSize);
 
-gameLoop(game);
+const game = new Field();
+
+game.gameInit();
