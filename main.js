@@ -84,7 +84,7 @@ class Field {
     evaluateAnswer(answer) {
         if (answer.toLowerCase() === 'easy') return 0.1;
         if (answer.toLowerCase() === 'medium') return 0.3;
-        if (answer.toLowerCase() === 'hard') return 0.4;
+        if (answer.toLowerCase() === 'hard') return 0.5;
         else {
             askDifficulty()
         }
