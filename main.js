@@ -16,6 +16,28 @@ const randomNum = (min, max) => {
     return Math.floor(Math.random() * (max - min) + min);
 }
 
+const removeFromArr = (arr, el) => {
+    for (let i=arr.length -1; i>=0; i--) {
+        if (arr[i] === el) {
+            arr.splice(i,1);
+        }
+    }
+}
+
+// const distance = (a,b) => {
+//     let a = a.posVert - b.posVert;
+//     let b = a.posHor - b.posHor;
+
+//     return Math.sqrt(a*a + b*b)
+// }
+
+const heuristics = (current, endPoint) => {
+    //let d = distance(current, endPoint);
+    
+    let d = Math.abs(current.vert - endPoint.vert) + Math.abs(current.hor - endPoint.hor);
+    
+    return d;
+}
 
 
 
@@ -25,6 +47,8 @@ class Field {
     constructor() {
         this.posVert = 0;
         this.posHor = 0;
+        this.endPosVert = 0;
+        this.endPosHor = 0;
         this.height = 0;
         this.width = 0
         this.field = [];
@@ -104,6 +128,7 @@ class Field {
         this.generateField();
         this.gameLoop();
         
+        
     }
 // Handles the progress of the game
 
@@ -126,7 +151,7 @@ class Field {
         
         switch (move) {
             case 'w':
-                console.log('This goes up');
+                
                 this.posVert -= 1;
                 console.log(this.posVert)
                 break;
@@ -208,16 +233,156 @@ class Field {
         // Placing our har at a random pos
         let rndLine = randomNum(0, this.height);
         let rndPlace = randomNum(0, this.width);
-        if(generated[rndLine][rndPlace] !== pathCharacter) {
-            generated[rndLine].splice(rndPlace, 1, hat)
-        } else {
-            generated[randomNum(0, this.height)].splice(randomNum(0, this.width), 1, hat)
-        }
-        ;
-        this.field = generated;
+        while (generated[rndLine][rndPlace] === pathCharacter) {
+            rndLine = randomNum(0, this.height);
+            rndPlace = randomNum(0, this.width);
+        }; 
+        generated[rndLine].splice(rndPlace, 1, hat);
+        this.endPosVert = rndLine;
+        this.endPosHor = rndPlace;
         this.posVert = startVertPos;
         this.posHor = startHorPos;
         
+        if (this.isPlayable(generated) === false) {
+            this.generateField();
+        } else {
+            this.field = generated;
+        }
+        
+        
+        
+        
+        
+    }
+
+// Checks if a level is beatable by using A* algorithm
+    isPlayable(generatedArr)  {
+        const raw = generatedArr;
+        const savedField = raw.map(el => {return el});
+        console.log(raw);
+        console.log(generatedArr)
+        
+        let startVert = this.posVert;
+        let startHor = this.posHor;
+       
+        let endVert = this.endPosVert;
+        let endHor = this.endPosHor;
+       
+        let start;
+        let end;
+
+        const openSet = [];
+        const closedSet = [];
+        
+        class Spot {
+            constructor (i,j) {
+                this.vert = i;
+                this.hor = j;
+                this.f = 0;
+                this.g = 0;
+                this.h = 0;
+                this.neighbors = [];
+                this.previous = undefined;
+                this.obstacle = false;
+            }
+        addNeighbors(arr) {
+            let vertPos = this.vert;
+            let horPos = this.hor;
+            if (horPos < arr[vertPos].length - 1) {
+                this.neighbors.push(arr[vertPos][horPos + 1])
+            }
+            if (horPos > 0) {
+                this.neighbors.push(arr[vertPos][horPos - 1])
+            }
+            if (vertPos < arr.length - 1) {
+                this.neighbors.push(arr[vertPos + 1][horPos]);
+            }
+            if (vertPos > 0) {
+                this.neighbors.push(arr[vertPos - 1][horPos])
+            }
+        }
+            
+        }
+
+        for(let i=0; i<savedField.length; i++) {
+            for(let j=0; j<savedField[i].length; j++) {
+                if (savedField[i][j] === hole) {
+                    savedField[i][j] = new Spot(i,j);
+                    savedField[i][j].obstacle = true;
+                } else {
+                    savedField[i][j] = new Spot (i,j);
+                }
+                
+    
+            }
+        }
+        for(let i=0; i<savedField.length; i++) {
+            for(let j=0; j<savedField[i].length; j++) {
+                savedField[i][j].addNeighbors(savedField); 
+            }
+        }
+    
+        console.log(raw)
+        start = savedField[startVert][startHor];
+        end = savedField[endVert][endHor];
+    
+        openSet.push(start);
+        while (openSet.length > 0) {
+            let winner = 0;
+    
+            for(let i=0;i < openSet.length; i++) {
+                if (openSet[i].f < openSet[winner].f) {
+                    winner = i;
+                }
+            }
+    
+            let current = openSet[winner];
+            
+            if (current === end) {
+                let path = []
+                let temp = current;
+                path.push(temp);
+                while(temp.previous) {
+                    path.push(temp.previous);
+                    temp = temp.previous
+                }
+    
+    
+                console.log('Done');
+                
+                return true
+            }
+            removeFromArr(openSet, current);
+            closedSet.push(current)
+    
+            let neighborsOfSpot = current.neighbors;
+            
+            for (let i=0; i<neighborsOfSpot.length; i++) {
+                let neighborOfSpot = neighborsOfSpot[i];
+                if (!closedSet.includes(neighborOfSpot) && !neighborOfSpot.obstacle) {
+                    let tempG = current.g + 1;
+                    if (openSet.includes(neighborOfSpot)) {
+                        if (tempG < neighborOfSpot.g) {
+                        neighborOfSpot.g = tempG;
+                    } 
+                    } else {
+                        neighborOfSpot.g = tempG;
+                        openSet.push(neighborOfSpot)
+                    }
+    
+                    neighborOfSpot.h = heuristics(neighborOfSpot, end);
+                    neighborOfSpot.f = neighborOfSpot.g + neighborOfSpot.h;
+                    
+                }
+    
+            }
+
+        } 
+           
+        console.log(`There is no solution`);
+        
+        return false
+
     }
 // Prints the field to the terminal 
 
@@ -233,75 +398,21 @@ class Field {
 
 const game = new Field();
 
-game.width = 20;
-game.height = 20;
-const arrHoles = game.forGenerator(0.4);
-
-game.arrWithHoles = arrHoles;
+game.gameInit();
 
 
 
 
 
+// const fs = require('fs');
+// const path = require('path');
+// const data = fs.readFileSync('data.json');
+// const savedField = JSON.parse(data);
 
-const fs = require('fs');
-const path = require('path');
-const data = fs.readFileSync('data.json');
-const savedField = JSON.parse(data);
-
-process.on('Uncaught error', (err) => {
-    console.log(`There is an error: ${err}`);
-    process.exit(1);
-})
+// process.on('Uncaught error', (err) => {
+//     console.log(`There is an error: ${err}`);
+//     process.exit(1);
+// })
  
 
- let startVert = 7;
- let startHor = 3;
 
- let endVert = 5;
- let endHor = 10;
-
- let start;
- let end;
-
-game.field = savedField;
-game.print();
-
-const openSet = [];
-const closedSet = [];
-
-function Spot() {
-    
-    this.f = 0;
-    this.g = 0;
-    this.h = 0;
-}
-
-
-const mazeSolver = () => {
-    for(let i=0; i<savedField.length; i++) {
-        for(let j=0; j<savedField[i].length; j++) {
-            savedField[i][j] = new Spot(); 
-        }
-    }
-    start = savedField[startVert][startHor];
-    end = savedField[endVert][endHor];
-
-    openSet.push(start);
-    if (openSet.length > 0) {
-        let winner = 0;
-
-        for(let i=0;i < openSet.length; i++) {
-            if (openSet[i].f < openSet[winner].f) {
-                winner = i;
-            }
-        }
-        if (openSet[winner] === end) {
-            console.log('Done')
-        }
-
-    } else {
-
-    }
-
-}
