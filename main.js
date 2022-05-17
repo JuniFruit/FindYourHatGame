@@ -24,12 +24,8 @@ const removeFromArr = (arr, el) => {
     }
 }
 
-// const distance = (a,b) => {
-//     let a = a.posVert - b.posVert;
-//     let b = a.posHor - b.posHor;
 
-//     return Math.sqrt(a*a + b*b)
-// }
+
 
 const heuristics = (current, endPoint) => {
     //let d = distance(current, endPoint);
@@ -246,6 +242,11 @@ class Field {
         if (this.isPlayable(generated) === false) {
             this.generateField();
         } else {
+            for(let i=0; i<generated.length;i++){
+                for(let j=0; j<generated[i].length;j++) {
+                    generated[i][j] = generated[i][j].char;
+                }
+            }
             this.field = generated;
         }
         
@@ -257,10 +258,9 @@ class Field {
 
 // Checks if a level is beatable by using A* algorithm
     isPlayable(generatedArr)  {
-        const raw = generatedArr;
-        const savedField = raw.map(el => {return el});
-        console.log(raw);
-        console.log(generatedArr)
+        
+        const savedField = generatedArr;
+        
         
         let startVert = this.posVert;
         let startHor = this.posHor;
@@ -275,7 +275,7 @@ class Field {
         const closedSet = [];
         
         class Spot {
-            constructor (i,j) {
+            constructor (i,j, char) {
                 this.vert = i;
                 this.hor = j;
                 this.f = 0;
@@ -284,33 +284,34 @@ class Field {
                 this.neighbors = [];
                 this.previous = undefined;
                 this.obstacle = false;
+                this.char = char;
             }
-        addNeighbors(arr) {
-            let vertPos = this.vert;
-            let horPos = this.hor;
-            if (horPos < arr[vertPos].length - 1) {
-                this.neighbors.push(arr[vertPos][horPos + 1])
+            addNeighbors(arr) {
+                let vertPos = this.vert;
+                let horPos = this.hor;
+                if (horPos < arr[vertPos].length - 1) {
+                    this.neighbors.push(arr[vertPos][horPos + 1])
+                }
+                if (horPos > 0) {
+                    this.neighbors.push(arr[vertPos][horPos - 1])
+                }
+                if (vertPos < arr.length - 1) {
+                    this.neighbors.push(arr[vertPos + 1][horPos]);
+                }
+                if (vertPos > 0) {
+                    this.neighbors.push(arr[vertPos - 1][horPos])
+                }
             }
-            if (horPos > 0) {
-                this.neighbors.push(arr[vertPos][horPos - 1])
-            }
-            if (vertPos < arr.length - 1) {
-                this.neighbors.push(arr[vertPos + 1][horPos]);
-            }
-            if (vertPos > 0) {
-                this.neighbors.push(arr[vertPos - 1][horPos])
-            }
-        }
             
         }
 
         for(let i=0; i<savedField.length; i++) {
             for(let j=0; j<savedField[i].length; j++) {
                 if (savedField[i][j] === hole) {
-                    savedField[i][j] = new Spot(i,j);
+                    savedField[i][j] = new Spot(i,j, savedField[i][j]);
                     savedField[i][j].obstacle = true;
                 } else {
-                    savedField[i][j] = new Spot (i,j);
+                    savedField[i][j] = new Spot (i,j, savedField[i][j]);
                 }
                 
     
@@ -322,7 +323,7 @@ class Field {
             }
         }
     
-        console.log(raw)
+        
         start = savedField[startVert][startHor];
         end = savedField[endVert][endHor];
     

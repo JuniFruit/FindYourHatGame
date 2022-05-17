@@ -9,7 +9,7 @@ module.exports.setStyles = function setTerminalStyles() {
     
     term.bold();
     term.colorRgbHex(`#003300`);
-    // term.eraseDisplayAbove();
+    term.eraseDisplayAbove();
     term.setCursorColor('green');
     
 }
