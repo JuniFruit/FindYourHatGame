@@ -130,7 +130,7 @@ const appendData = (stats) => {
     })
 }
 
-console.log(data)
+
 
 
 class Field {
@@ -213,7 +213,7 @@ class Field {
     }
 // The main function to start the game 
     gameInit() {
-        //styles.setStyles();
+        styles.setStyles();
         const playerName = prompt('Enter your name: ')
         this.askFieldSize(playerName);
         const difficulty = this.askDifficulty();
