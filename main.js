@@ -34,8 +34,7 @@ const removeFromArr = (arr, el) => {
 // Counts the heuristics, used in A* algorithm
 
 const heuristics = (current, endPoint) => {
-    //let d = distance(current, endPoint);
-    
+  
     let d = Math.abs(current.vert - endPoint.vert) + Math.abs(current.hor - endPoint.hor);
     
     return d;
@@ -250,9 +249,7 @@ class Field {
         
         switch (move) {
             case 'w':
-                
-                this.posVert -= 1;
-                console.log(this.posVert)
+               this.posVert -= 1;
                 break;
             case 's':
                 this.posVert += 1;
@@ -309,7 +306,7 @@ class Field {
         }
         if (answer.toLowerCase() === 'no') {
             if (this.playerStats.isPlayerInDB() === undefined) {
-                console.log('Player is in DB')
+                
                 this.playerStats.checkPrevResults();
                 appendData();
                 console.log('..........................................................');
