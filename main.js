@@ -4,9 +4,9 @@ const styles = require('./terminalCSS.js');
 const prompt = require('prompt-sync')({sigint: true});
 const fs = require('fs');
 
+const nickNames = ['Contestant', 'Legendary', 'World-famous', 'Hat-finder', 'Game-lover', 'Maze-solver', 'Unbeatable', 'Cyber-athlete', 'Gamer', 'Godlike']
 
-
-
+const verbs = ['holds streak of', 'is at', 'has solved', 'has found a hat in', 'has won', 'has shined in', 'has been lucky'];
 
 
 
@@ -22,6 +22,7 @@ const randomNum = (min, max) => {
     return Math.floor(Math.random() * (max - min) + min);
 }
 
+
 const removeFromArr = (arr, el) => {
     for (let i=arr.length -1; i>=0; i--) {
         if (arr[i] === el) {
@@ -30,6 +31,7 @@ const removeFromArr = (arr, el) => {
     }
 }
 
+// Counts the heuristics, used in A* algorithm
 
 const heuristics = (current, endPoint) => {
     //let d = distance(current, endPoint);
@@ -40,6 +42,7 @@ const heuristics = (current, endPoint) => {
 }
 
 
+// Stores information about a player
 
 class Player {
     constructor(name, difficulty) {
@@ -47,32 +50,88 @@ class Player {
         this.winsInRow = 0;
         this.difficulty = difficulty;
     }
-
+// Resets winstreak if a player loses
+    resetWin() {
+        this.winsInRow = 0;
+    }
+// Increments victories if a player succeeds
     addWin() {
         this.winsInRow += 1;
     }
-
+// Checks previous results, if current streak is bigger, it updates the streak in data base Array
     checkPrevResults() {
         let playerName = this.name;
         let wins = this.winsInRow;
         
-        playerDB.this.name
+        for(let i=0; i<data.length;i++) {
+            if (data[i].name === playerName) {
+                if (data[i].winsInRow < wins) {
+                    data[i].winsInRow = wins;
+                } else {
+                    return;
+                }
+            }
+        }
+    }
+// Checks if player already exists in data base
+    isPlayerInDB() {
+
+        let playerName = this.name;
+
+        for(let i=0; i<data.length; i++) {
+            if (data[i].name === playerName) {
+                return true;
+            } else {
+                return false
+            }
+        }
+    }
+
+    printLeaderBoard() {
+        console.log('10 recent players:');
+
+        for(let i=0; i<10; i++) {
+            let rndNickName = randomNum(0, nickNames.length);
+            let rndVerb = randomNum(0, verbs.length)
+            console.log(`${nickNames[rndNickName]} ${data[i].name} ${verbs[rndVerb]} ${data[i].winsInRow} games in a row at ${data[i].difficulty} difficulty`)
+        }
     }
 
 }
 
-const newPlayer = new Player('Fruit', 'hard')
-const newPlayer1 = new Player('Akim', 'easy')
-// fs.appendFile('./data.json', JSON.stringify(newPlayer), err => {
-//     if (err) {
-//         console.log(err);
-//     }
-// })
 
-const dataRaw = fs.readFile('data.json', 'utf-8', (err) => { console.log(err)});
-const dataParsed = JSON.parse(dataRaw);
 
-console.log(dataParsed)
+
+// retrieves data from a file 
+
+let data;
+
+try {
+     data = JSON.parse(fs.readFileSync('dataBase.json'));
+} catch (e) {
+    console.log(`Couldn't retrieve the data. ${e}`)
+}
+
+
+
+// sends results to a file
+
+const appendData = (stats) => {
+
+    if (stats !== undefined) {
+
+        data.unshift(stats);
+    }
+    
+    fs.writeFile('dataBase.json', JSON.stringify(data, null, 2), (err) => {
+        if (err) {
+            console.log(err)
+        } 
+    })
+}
+
+console.log(data)
+
 
 class Field {
     constructor() {
@@ -154,14 +213,15 @@ class Field {
     }
 // The main function to start the game 
     gameInit() {
-        styles.setStyles();
+        //styles.setStyles();
         const playerName = prompt('Enter your name: ')
         this.askFieldSize(playerName);
         const difficulty = this.askDifficulty();
         const probability = this.evaluateAnswer(difficulty);
         this.arrWithHoles = this.forGenerator(probability);
         this.generateField();
-        this.playerStats = new Player(playerName, difficulty)
+        this.playerStats = new Player(playerName, difficulty);
+        
         this.gameLoop();
         
         
@@ -214,15 +274,17 @@ class Field {
         
         if (this.posVert < 0 || this.posHor < 0) {
             console.log('Oops, You fell out of the world!');
+            this.playerStats.resetWin()
             return true
         }
             if (this.posVert > this.field.length - 1 || this.posHor > this.field[0].length - 1) {
             console.log('Oops, You fell out of the world!');
+            this.playerStats.resetWin()
             return true
         }
         if (this.field[this.posVert][this.posHor] === hole) {
             console.log('You fell down in a hole');
-
+            this.playerStats.resetWin()
             return true;
         }
         if (this.field[this.posVert][this.posHor] === hat) {
@@ -241,9 +303,19 @@ class Field {
             this.generateField();
             this.gameLoop();
     
-        } else {
-            console.log('See you next time!')
-            return
+        }
+        if (answer.toLowerCase() === 'no') {
+            if (this.playerStats.isPlayerInDB()) {
+                this.playerStats.checkPrevResults();
+                appendData();
+
+            } else {
+                appendData(this.playerStats);
+                console.log('..........................................................');
+                this.playerStats.printLeaderBoard();
+                console.log('..........................................................')
+                console.log(`Your current result is ${this.playerStats.winsInRow} wins in a row. See you next time ${this.playerStats.name}!`)
+            }
         }
     
     }
@@ -441,7 +513,7 @@ class Field {
 
 const game = new Field();
 
-//game.gameInit();
+game.gameInit();
 
 
 
