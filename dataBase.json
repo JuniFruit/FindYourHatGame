@@ -1,7 +1,42 @@
 [
   {
+    "name": "Lisa",
+    "winsInRow": 1,
+    "difficulty": "hard"
+  },
+  {
+    "name": "Akim",
+    "winsInRow": 2,
+    "difficulty": "hard"
+  },
+  {
+    "name": "Elk",
+    "winsInRow": 0,
+    "difficulty": "hard"
+  },
+  {
+    "name": "Holland",
+    "winsInRow": 2,
+    "difficulty": "hard"
+  },
+  {
     "name": "Fruit",
-    "winsInRow": 9,
+    "winsInRow": 4,
+    "difficulty": "hard"
+  },
+  {
+    "name": "Hulk",
+    "winsInRow": 3,
+    "difficulty": "easy"
+  },
+  {
+    "name": "IceCream",
+    "winsInRow": 1,
+    "difficulty": "easy"
+  },
+  {
+    "name": "NoOne",
+    "winsInRow": 5,
     "difficulty": "hard"
   },
   {
@@ -20,7 +55,7 @@
     "difficulty": "hard"
   },
   {
-    "name": "Akim",
+    "name": "NS",
     "winsInRow": 8,
     "difficulty": "medium"
   },
@@ -63,10 +98,5 @@
     "name": "Pony",
     "winsInRow": 1,
     "difficulty": "easy"
-  },
-  {
-    "name": "Hat_hunter",
-    "winsInRow": 4,
-    "difficulty": "medium"
   }
 ]

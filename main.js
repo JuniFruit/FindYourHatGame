@@ -58,7 +58,7 @@ class Player {
     addWin() {
         this.winsInRow += 1;
     }
-// Checks previous results, if current streak is bigger, it updates the streak in data base Array
+// Checks previous results, if current streak is bigger, it updates the streak in data base Array as well as the difficulty
     checkPrevResults() {
         let playerName = this.name;
         let wins = this.winsInRow;
@@ -66,24 +66,24 @@ class Player {
         for(let i=0; i<data.length;i++) {
             if (data[i].name === playerName) {
                 if (data[i].winsInRow < wins) {
+
                     data[i].winsInRow = wins;
-                } else {
-                    return;
-                }
+                    data[i].difficulty = this.difficulty
+                    let temp = data[i];
+                    data.unshift(temp);
+                    data.splice(i + 1, 1);
+                } 
             }
         }
     }
 // Checks if player already exists in data base
     isPlayerInDB() {
-
-        let playerName = this.name;
-
+  
         for(let i=0; i<data.length; i++) {
-            if (data[i].name === playerName) {
+            
+            if (data[i].name === this.playerName) {
                 return true;
-            } else {
-                return false
-            }
+            } 
         }
     }
 
@@ -308,7 +308,8 @@ class Field {
     
         }
         if (answer.toLowerCase() === 'no') {
-            if (this.playerStats.isPlayerInDB()) {
+            if (this.playerStats.isPlayerInDB() === undefined) {
+                console.log('Player is in DB')
                 this.playerStats.checkPrevResults();
                 appendData();
                 console.log('..........................................................');
