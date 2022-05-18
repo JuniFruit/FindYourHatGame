@@ -463,7 +463,7 @@ class Field {
                 }
     
     
-                console.log('Done');
+                
                 
                 return true
             }
@@ -494,7 +494,7 @@ class Field {
 
         } 
            
-        console.log(`There is no solution`);
+        
         
         return false
 
