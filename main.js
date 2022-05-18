@@ -308,13 +308,17 @@ class Field {
             if (this.playerStats.isPlayerInDB()) {
                 this.playerStats.checkPrevResults();
                 appendData();
+                console.log('..........................................................');
+                this.playerStats.printLeaderBoard();
+                console.log('..........................................................')
+                console.log(`Your current result is ${this.playerStats.winsInRow} wins in a row. See you next time, ${this.playerStats.name}!`)
 
             } else {
                 appendData(this.playerStats);
                 console.log('..........................................................');
                 this.playerStats.printLeaderBoard();
                 console.log('..........................................................')
-                console.log(`Your current result is ${this.playerStats.winsInRow} wins in a row. See you next time ${this.playerStats.name}!`)
+                console.log(`Your current result is ${this.playerStats.winsInRow} wins in a row. See you next time, ${this.playerStats.name}!`)
             }
         }
     

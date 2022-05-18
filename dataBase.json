@@ -1,7 +1,7 @@
 [
   {
     "name": "Fruit",
-    "winsInRow": 0,
+    "winsInRow": 2,
     "difficulty": "hard"
   },
   {
@@ -11,7 +11,7 @@
   },
   {
     "name": "Fruit",
-    "winsInRow": 0,
+    "winsInRow": 2,
     "difficulty": "hard"
   },
   {
