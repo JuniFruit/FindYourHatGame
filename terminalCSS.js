@@ -30,6 +30,10 @@ module.exports.printWhite = function printWhite(str) {
     term.white(str);
 }
 
+module.exports.printGreen = function printWhite(str) {
+    term.green(str);
+}
+
 
 
 

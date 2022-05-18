@@ -88,12 +88,15 @@ class Player {
     }
 
     printLeaderBoard() {
+        console.log('                                        ')
         console.log('10 recent players:');
+        console.log('                                        ');
 
         for(let i=0; i<10; i++) {
             let rndNickName = randomNum(0, nickNames.length);
             let rndVerb = randomNum(0, verbs.length)
-            console.log(`${nickNames[rndNickName]} ${data[i].name} ${verbs[rndVerb]} ${data[i].winsInRow} games in a row at ${data[i].difficulty} difficulty`)
+            console.log(`${nickNames[rndNickName]} ${data[i].name} ${verbs[rndVerb]} ${data[i].winsInRow} games in a row at ${data[i].difficulty} difficulty`);
+            console.log('                                        ');
         }
     }
 
