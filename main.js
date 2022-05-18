@@ -2,6 +2,12 @@
 
 const styles = require('./terminalCSS.js');
 const prompt = require('prompt-sync')({sigint: true});
+const fs = require('fs');
+
+
+
+
+
 
 
 const hat = '^';
@@ -25,8 +31,6 @@ const removeFromArr = (arr, el) => {
 }
 
 
-
-
 const heuristics = (current, endPoint) => {
     //let d = distance(current, endPoint);
     
@@ -37,7 +41,38 @@ const heuristics = (current, endPoint) => {
 
 
 
+class Player {
+    constructor(name, difficulty) {
+        this.name = name;
+        this.winsInRow = 0;
+        this.difficulty = difficulty;
+    }
 
+    addWin() {
+        this.winsInRow += 1;
+    }
+
+    checkPrevResults() {
+        let playerName = this.name;
+        let wins = this.winsInRow;
+        
+        playerDB.this.name
+    }
+
+}
+
+const newPlayer = new Player('Fruit', 'hard')
+const newPlayer1 = new Player('Akim', 'easy')
+// fs.appendFile('./data.json', JSON.stringify(newPlayer), err => {
+//     if (err) {
+//         console.log(err);
+//     }
+// })
+
+const dataRaw = fs.readFile('data.json', 'utf-8', (err) => { console.log(err)});
+const dataParsed = JSON.parse(dataRaw);
+
+console.log(dataParsed)
 
 class Field {
     constructor() {
@@ -50,12 +85,15 @@ class Field {
         this.field = [];
         this.isOver = false;
         this.arrWithHoles;
+        this.playerStats;
     }
+
+   
 
 // Asks field size of the game
 
-    askFieldSize() {
-        prompt('Hello! To move around give the direction with W,A,S,D and hit Enter')
+    askFieldSize(str) {
+        prompt(`Hello, ${str}! To move around give the direction with W,A,S,D and hit Enter`)
         let userSize = prompt('Enter field size: ');
         while (!(userSize > 0)) {
             userSize = prompt('Please enter a number: ');
@@ -116,12 +154,14 @@ class Field {
     }
 // The main function to start the game 
     gameInit() {
-        styles.setStyles()
-        this.askFieldSize();
+        styles.setStyles();
+        const playerName = prompt('Enter your name: ')
+        this.askFieldSize(playerName);
         const difficulty = this.askDifficulty();
         const probability = this.evaluateAnswer(difficulty);
         this.arrWithHoles = this.forGenerator(probability);
         this.generateField();
+        this.playerStats = new Player(playerName, difficulty)
         this.gameLoop();
         
         
@@ -182,10 +222,12 @@ class Field {
         }
         if (this.field[this.posVert][this.posHor] === hole) {
             console.log('You fell down in a hole');
+
             return true;
         }
         if (this.field[this.posVert][this.posHor] === hat) {
             console.log('Congratulations! You\'ve found the hat');
+            this.playerStats.addWin();
             return true
         }
         
@@ -399,7 +441,7 @@ class Field {
 
 const game = new Field();
 
-game.gameInit();
+//game.gameInit();
 
 
 
@@ -410,10 +452,10 @@ game.gameInit();
 // const data = fs.readFileSync('data.json');
 // const savedField = JSON.parse(data);
 
-// process.on('Uncaught error', (err) => {
-//     console.log(`There is an error: ${err}`);
-//     process.exit(1);
-// })
+process.on('Uncaught error', (err) => {
+    console.log(`There is an error: ${err}`);
+    process.exit(1);
+})
  
 
 
