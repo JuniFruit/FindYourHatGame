@@ -39,6 +39,35 @@ const heuristics = (current, endPoint) => {
     
     return d;
 }
+// retrieves data from a file 
+
+let data;
+
+
+
+try {
+     data = JSON.parse(fs.readFileSync('dataFile.json'));
+} catch (e) {
+    console.log(`Couldn't retrieve the data. ${e}`)
+}
+
+
+
+// sends results to a file
+
+const appendData = (stats) => {
+
+    if (stats !== undefined) {
+
+        data.unshift(stats);
+    }
+    
+    fs.writeFile('dataFile.json', JSON.stringify(data, null, 2), (err) => {
+        if (err) {
+            console.log(err)
+        } 
+    })
+}
 
 
 // Stores information about a player
@@ -67,10 +96,11 @@ class Player {
                 if (data[i].winsInRow < wins) {
 
                     data[i].winsInRow = wins;
-                    data[i].difficulty = this.difficulty
-                    let temp = data[i];
-                    data.unshift(temp);
+                    data[i].difficulty = this.difficulty;
+                    data.unshift(data[i]);
                     data.splice(i + 1, 1);
+                    
+                   
                 } 
             }
         }
@@ -80,7 +110,7 @@ class Player {
   
         for(let i=0; i<data.length; i++) {
             
-            if (data[i].name === this.playerName) {
+            if (data[i].name === this.name) {
                 return true;
             } 
         }
@@ -104,33 +134,6 @@ class Player {
 
 
 
-// retrieves data from a file 
-
-let data;
-
-try {
-     data = JSON.parse(fs.readFileSync('dataFile.json'));
-} catch (e) {
-    console.log(`Couldn't retrieve the data. ${e}`)
-}
-
-
-
-// sends results to a file
-
-const appendData = (stats) => {
-
-    if (stats !== undefined) {
-
-        data.unshift(stats);
-    }
-    
-    fs.writeFile('dataFile.json', JSON.stringify(data, null, 2), (err) => {
-        if (err) {
-            console.log(err)
-        } 
-    })
-}
 
 
 
@@ -303,24 +306,26 @@ class Field {
             this.generateField();
             this.gameLoop();
     
-        }
-        if (answer.toLowerCase() === 'no') {
-            if (this.playerStats.isPlayerInDB() === undefined) {
+        } else if (answer.toLowerCase() === 'no') {
+            if (this.playerStats.isPlayerInDB()) {
                 
                 this.playerStats.checkPrevResults();
                 appendData();
                 console.log('..........................................................');
                 this.playerStats.printLeaderBoard();
                 console.log('..........................................................')
-                console.log(`Your current result is ${this.playerStats.winsInRow} wins in a row. See you next time, ${this.playerStats.name}!`)
+                prompt(`Your current result is ${this.playerStats.winsInRow} wins in a row. See you next time, ${this.playerStats.name}!`)
 
             } else {
                 appendData(this.playerStats);
                 console.log('..........................................................');
                 this.playerStats.printLeaderBoard();
                 console.log('..........................................................')
-                console.log(`Your current result is ${this.playerStats.winsInRow} wins in a row. See you next time, ${this.playerStats.name}!`)
+                prompt(`Your current result is ${this.playerStats.winsInRow} wins in a row. See you next time, ${this.playerStats.name}!`)
             }
+        } else {
+            let answer = prompt('Type yes or no: ');
+            this.gameRestart(answer);
         }
     
     }

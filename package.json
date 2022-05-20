@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "A terminal maze-solving game.",
   "main": "main.js",
-  "author": "Codecademy",
+  "author": "JuniFruit",
   "license": "ISC",
   "dependencies": {
     "kit": "^0.1.2",
