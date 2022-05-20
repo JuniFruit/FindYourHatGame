@@ -109,7 +109,7 @@ class Player {
 let data;
 
 try {
-     data = JSON.parse(fs.readFileSync('dataBase.json'));
+     data = JSON.parse(fs.readFileSync('dataFile.json'));
 } catch (e) {
     console.log(`Couldn't retrieve the data. ${e}`)
 }
@@ -125,7 +125,7 @@ const appendData = (stats) => {
         data.unshift(stats);
     }
     
-    fs.writeFile('dataBase.json', JSON.stringify(data, null, 2), (err) => {
+    fs.writeFile('dataFile.json', JSON.stringify(data, null, 2), (err) => {
         if (err) {
             console.log(err)
         } 
