@@ -4,6 +4,7 @@ const term = require('terminal-kit').terminal;
 
 
 
+
 module.exports.setStyles = function setTerminalStyles() {
     term.windowTitle('Find Your Hat Game')
     

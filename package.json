@@ -5,6 +5,17 @@
   "main": "main.js",
   "author": "JuniFruit",
   "license": "ISC",
+  
+  "bin": "main.js",
+  "scripts": {
+  "pkg": "pkg . --out-path=dist/"
+
+  },
+  "pkg": {
+    "assets": ["node_modules/**/*"],
+    "targets": ["node16"]
+
+  },
   "dependencies": {
     "kit": "^0.1.2",
     "prompt-sync": "^4.1.7",

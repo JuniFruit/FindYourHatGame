@@ -1,8 +1,12 @@
-// Importing prompt and styles
+// Imports
 
 const styles = require('./terminalCSS.js');
 const prompt = require('prompt-sync')({sigint: true});
+const process = require('process');
+
 const fs = require('fs');
+
+// Resources
 
 const nickNames = ['Contestant', 'Legendary', 'World-famous', 'Hat-finder', 'Game-lover', 'Maze-solver', 'Unbeatable', 'Cyber-athlete', 'Gamer', 'Godlike']
 
@@ -56,13 +60,14 @@ try {
 // sends results to a file
 
 const appendData = (stats) => {
-
+    
     if (stats !== undefined) {
 
         data.unshift(stats);
+        
     }
     
-    fs.writeFile('dataFile.json', JSON.stringify(data, null, 2), (err) => {
+    fs.writeFileSync('dataFile.json', JSON.stringify(data, null, 2), (err) => {
         if (err) {
             console.log(err)
         } 
@@ -209,6 +214,7 @@ class Field {
 // Loops the game until finish condition is achieved
      gameLoop(){
         while (this.isOver === false) {
+            
             styles.setStyles();
             this.print();
             this.gameProgress();
@@ -218,7 +224,7 @@ class Field {
     }
 // The main function to start the game 
     gameInit() {
-        styles.setStyles();
+        styles.setStyles();       
         const playerName = prompt('Enter your name: ')
         this.askFieldSize(playerName);
         const difficulty = this.askDifficulty();
