@@ -1,0 +1,82 @@
+[
+  {
+    "name": "Test",
+    "winsInRow": 1,
+    "difficulty": "medium"
+  },
+  {
+    "name": "Artem",
+    "winsInRow": 3,
+    "difficulty": "hard"
+  },
+  {
+    "name": "",
+    "winsInRow": 0,
+    "difficulty": "medium"
+  },
+  {
+    "name": "Fruit ",
+    "winsInRow": 1,
+    "difficulty": "medium"
+  },
+  {
+    "name": "Boiler",
+    "winsInRow": 1,
+    "difficulty": "hard"
+  },
+  {
+    "name": "Jacob",
+    "winsInRow": 0,
+    "difficulty": "eaSy"
+  },
+  {
+    "name": "jacob",
+    "winInRow": 1,
+    "difficulty": "easy"
+  },
+  {
+    "name": "Smith",
+    "winInRow": 5,
+    "difficulty": "easy"
+  },
+  {
+    "name": "UAMartyr",
+    "winInRow": 5,
+    "difficulty": "easy"
+  },
+  {
+    "name": "Holand",
+    "winInRow": 5,
+    "difficulty": "easy"
+  },
+  {
+    "name": "LMAO",
+    "winInRow": 5,
+    "difficulty": "easy"
+  },
+  {
+    "name": "Hat_finder",
+    "winInRow": 5,
+    "difficulty": "easy"
+  },
+  {
+    "name": "Elk",
+    "winInRow": 5,
+    "difficulty": "easy"
+  },
+  {
+    "name": "Fruit",
+    "winInRow": 5,
+    "difficulty": "easy"
+  },
+  {
+    "name": "Killer",
+    "winInRow": 5,
+    "difficulty": "easy"
+  },
+  {
+    "name": "Sniper",
+    "winInRow": 5,
+    "difficulty": "easy"
+  }
+]
