@@ -14,3 +14,6 @@ The main goal of the game is to make your way to a hat <span style="color: green
 * Game has random field generator, if game restarts it generates new field of the same size and difficulty automatically
 * Field generator A* Pathfinder algorithm to make sure the field is actually beatable
 * To exit the game, simply hit CTRL + C (Windows) or type in No when game asks you to restart
+
+## Note!
+<i> To play this game you'll need to download this repo to your machine and start EXE file. If you're on MAC, you'll need Node.js intalled and start main.js via console</i>
